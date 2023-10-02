@@ -22,11 +22,11 @@ class User(db.Model, SerializerMixin):
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(128), nullable=False)
-    phonenumber = db.Column(db.Integer())
+    
 
     applications = db.relationship('JobApplication', backref='user')
     jobs = db.relationship('JobListing', secondary=user_joblisting_association, back_populates='applicants')
-    added_jobs = db.relationship('AddJob', backref='user')
+    # added_jobs = db.relationship('AddJob', backref='user')
 
 
 class JobListing(db.Model, SerializerMixin):
@@ -55,12 +55,12 @@ class JobApplication(db.Model, SerializerMixin):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
  
 
-class AddJob(db.Model, SerializerMixin):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(120), nullable=False)
-    description = db.Column(db.Text, nullable=False)
-    location = db.Column(db.String(255), nullable=False)
-    company_name = db.Column(db.String(255), nullable=False)
-    posted_at = db.Column(db.DateTime, nullable=False)
+# class AddJob(db.Model, SerializerMixin):
+#     id = db.Column(db.Integer, primary_key=True)
+#     title = db.Column(db.String(120), nullable=False)
+#     description = db.Column(db.Text, nullable=False)
+#     location = db.Column(db.String(255), nullable=False)
+#     company_name = db.Column(db.String(255), nullable=False)
+#     posted_at = db.Column(db.DateTime, nullable=False)
 
-    user_id = db.Column(db.Integer,db.ForeignKey('users.id'))
+#     user_id = db.Column(db.Integer,db.ForeignKey('users.id'))
