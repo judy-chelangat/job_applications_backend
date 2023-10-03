@@ -27,6 +27,14 @@ class User(db.Model, SerializerMixin):
     applications = db.relationship('JobApplication', backref='user')
     jobs = db.relationship('JobListing', secondary=user_joblisting_association, back_populates='applicants')
     # added_jobs = db.relationship('AddJob', backref='user')
+    def serialize(self):
+        return {
+            "id":self.id,
+            "username":self.username,
+            "email":self.email,
+            "applications": [application.cover_letter for application in self.applications],
+            "jobs": [job.title for job in self.jobs]
+        }
 
 
 class JobListing(db.Model, SerializerMixin):
@@ -37,11 +45,22 @@ class JobListing(db.Model, SerializerMixin):
     description = db.Column(db.Text, nullable=False)
     location = db.Column(db.String(255), nullable=False)
     company_name = db.Column(db.String(255), nullable=False)
-    posted_at = db.Column(db.DateTime, nullable=False)
+    posted_at = db.Column(db.DateTime, server_default=db.func.now())
 
     applications = db.relationship('JobApplication', backref='job')
     applicants = db.relationship('User', secondary=user_joblisting_association, back_populates='jobs')
-
+    
+    def serialize(self):
+        return {
+            "id":self.id,
+            "title":self.title,
+            "description":self.description,
+            "location ":self.location,
+            "company_name":self.company_name,
+            "posted_at":self.posted_at,
+            "applicants": [applicant.username for applicant in self.applicants],
+            "application": [application.cover_letter for application in self.applications]
+        }
 
 class JobApplication(db.Model, SerializerMixin):
     __tablename__ = 'job_applications'
@@ -49,10 +68,18 @@ class JobApplication(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     cover_letter = db.Column(db.Text, nullable=False)
     resume_url = db.Column(db.String(255), nullable=False)
-    applied_at = db.Column(db.DateTime, nullable=False)
+    applied_at = db.Column(db.DateTime, server_default=db.func.now())
 
     job_listing_id = db.Column(db.Integer, db.ForeignKey('job_lists.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
+    def serialize(self):
+        return {
+            "id":self.id,
+            "cover_letter":self.cover_letter,
+            "resume_url":self.resume_url,
+            "applied_at":self.applied_at,
+        }
  
 
 # class AddJob(db.Model, SerializerMixin):
