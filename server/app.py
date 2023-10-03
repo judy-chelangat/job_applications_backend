@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
-from flask import Flask, make_response,jsonify,request
+from flask import Flask, make_response,jsonify,render_template,request
 from flask_migrate import Migrate
 from flask_restful import Api,Resource
-from flask_jwt_extended import  create_access_token
+from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
 from flask_wtf import FlaskForm
 from wtforms import StringField,PasswordField
 from wtforms.validators import DataRequired,Email,Length
@@ -81,6 +81,7 @@ class UserLogInResource(Resource):
 api.add_resource(UserLogInResource,'/log in')
 
 class UserResource(Resource):
+    @jwt_required()
     def get(self):
         users = [{'id':user.id,'username':user.username,'email':user.email} for user in User.query.all()]
         response = make_response(jsonify(users),200)
@@ -89,6 +90,7 @@ class UserResource(Resource):
 api.add_resource(UserResource,'/user')
 
 class UserById(Resource):
+    @jwt_required()
     def get(self,id):
         user = User.query.filter(User.id == id).first()
         if not user:
@@ -132,7 +134,6 @@ class JobListByIdResource(Resource):
         response = make_response(jsonify(job.serialize()), 200)
         return response
 
-<<<<<<< HEAD
 api.add_resource(JobListByIdResource, '/SearchJob/<int:id>')  # Updated endpoint to '/SearchJob/<int:id>'
 
 
@@ -190,65 +191,6 @@ class JobApplicationByIdResource(Resource):
 api.add_resource(JobApplicationByIdResource, '/job-application/<int:id>')
 
 
-=======
-class JobApplicationResource(Resource):
-    def get(self):
-        job_applications = [{'id': app.id, 'job_id': app.job_id, 'applicant_name': app.applicant_name} for app in JobApplication.query.all()]
-        response = make_response(jsonify(job_applications), 200)
-        return response
 
-    def post(self):
-        data = request.get_json()
-        job_id = data.get('job_id')
-        applicant_name = data.get('applicant_name')
-
-        if not job_id or not applicant_name:
-            return {'message': 'job_id and applicant_name are required'}, 400
-
-        job = JobListing.query.get(job_id)
-        if not job:
-            return {'message': 'Job not found'}, 404
-
-        new_application = JobApplication(job_id=job_id, applicant_name=applicant_name)
-        db.session.add(new_application)
-        db.session.commit()
-
-        response = make_response(new_application.to_dict(), 201)
-        return response
-
-api.add_resource(JobApplicationResource, '/job-applications')
-
-
-class JobApplicationByIdResource(Resource):
-    def get(self, id):
-        application = JobApplication.query.get(id)
-        if not application:
-            return {'error': 'Job application not found'}, 404
-        response = make_response(jsonify(application.to_dict()), 200)
-        return response
-
-    def delete(self, id):
-        application = JobApplication.query.get(id)
-        if not application:
-            return {'error': 'Job application not found'}, 404
-        db.session.delete(application)
-        db.session.commit()
-        return {'message': 'Job application deleted'}, 200
-
-    def patch(self, id):
-        application = JobApplication.query.get(id)
-        if not application:
-            return {'error': 'Job application not found'}, 404
-
-        data = request.get_json()
-        if 'applicant_name' in data:
-            application.applicant_name = data['applicant_name']
-
-        db.session.commit()
-        response = make_response(application.to_dict(), 200)
-        return response
-
-api.add_resource(JobApplicationByIdResource, '/job-application/<int:id>')
->>>>>>> e806444177c79986960926c5c021fd555d6e52b3
-
+    
     
