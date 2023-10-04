@@ -21,7 +21,7 @@ app.config['WTF_CSRF_ENABLED'] = False
 
 jwt = JWTManager(app)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://my_name:obBw505hbh8jIfdSwuB3rkwXW8gMbrev@dpg-ckcjhqciibqc73cd0b7g-a.oregon-postgres.render.com/database_name'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///jobs.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 app.json.compact =False
@@ -109,7 +109,6 @@ api.add_resource(UserById, '/user/<int:id>')
 
     
 class JobListResource(Resource):
-    @jwt_required()
     def get(self):
         joblists = [{'id':job.id,'title':job.title,'description':job.description,'location':job.location,'company_name':job.company_name,'datetime':job.posted_at}  for job in JobListing.query.all()]
         response = make_response(jsonify(joblists),200)
@@ -125,7 +124,7 @@ class JobListResource(Resource):
         return response
 
 
-api.add_resource(JobListResource,'/Available jobs')
+api.add_resource(JobListResource,'/Availablejobs')
 
 class JobListByIdResource(Resource):
     @jwt_required()
@@ -194,7 +193,8 @@ class JobApplicationByIdResource(Resource):
 
 api.add_resource(JobApplicationByIdResource, '/job-application/<int:id>')
 
-
+if __name__ == '__main__':
+    app.run(port=5555)
 
     
     
