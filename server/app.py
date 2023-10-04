@@ -20,7 +20,7 @@ app.config['WTF_CSRF_ENABLED'] = False
 
 jwt = JWTManager(app)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///jobs.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://my_name:obBw505hbh8jIfdSwuB3rkwXW8gMbrev@dpg-ckcjhqciibqc73cd0b7g-a.oregon-postgres.render.com/database_name'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 app.json.compact =False

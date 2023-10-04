@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 from app import app, db
 from models import User, JobListing, JobApplication
 from datetime import datetime
@@ -59,4 +59,5 @@ def seed_data():
 
 if __name__ == '__main__':
     seed_data()
+    print
 
