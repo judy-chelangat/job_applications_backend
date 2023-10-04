@@ -8,6 +8,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField,PasswordField
 from wtforms.validators import DataRequired,Email,Length
 from datetime import datetime
+from flask_cors import CORS
 
 
 from models import db, JobApplication,JobListing,User
@@ -29,6 +30,9 @@ migrate = Migrate(app, db)
 
 db.init_app(app)
 api = Api(app)
+
+CORS(app, resources={r"/api/*": {"origins": "*"}})
+
 
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(),Length(min=4,max=80)])
