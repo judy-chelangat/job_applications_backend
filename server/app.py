@@ -31,7 +31,7 @@ migrate = Migrate(app, db)
 db.init_app(app)
 api = Api(app)
 
-CORS(app, resources={r"/api/*": {"origins": "*"}})
+CORS(app, resources={'/*': {'origins': '*'}})
 
 
 class RegistrationForm(FlaskForm):
