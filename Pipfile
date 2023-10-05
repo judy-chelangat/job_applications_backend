@@ -15,6 +15,7 @@ flask-jwt-extended = "*"
 flask-wtf = "*"
 email-validator = "*"
 flask-cors = "*"
+faker = "*"
 
 [dev-packages]
 

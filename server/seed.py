@@ -1,63 +1,82 @@
-
 from app import app, db
 from models import User, JobListing, JobApplication
 from datetime import datetime
+from faker import Faker
 
+fake = Faker()
+
+# List of tech-related job titles and descriptions
+tech_job_data = [
+    {
+        'title': 'Senior Software Engineer',
+        'description': 'We are looking for an experienced Senior Software Engineer to join our team. In this role, you will be responsible for designing and developing software solutions that meet our clients\' needs. You will work closely with cross-functional teams to deliver high-quality software products.'
+    },
+    {
+        'title': 'UI/UX Designer',
+        'description': 'As a UI/UX Designer, you will be responsible for creating user-friendly and visually appealing interfaces for our web and mobile applications. You will collaborate with our development team to ensure that our products provide the best possible user experience.'
+    },
+    {
+        'title': 'Data Scientist',
+        'description': 'We are seeking a Data Scientist with a strong background in machine learning and data analysis. In this role, you will work on complex data projects, develop predictive models, and provide data-driven insights to support business decisions.'
+    },
+    {
+        'title': 'Product Manager',
+        'description': 'Join our team as a Product Manager and lead the development and launch of innovative products. You will define product strategies, prioritize features, and collaborate with cross-functional teams to deliver successful products to market.'
+    },
+    {
+        'title': 'DevOps Engineer',
+        'description': 'As a DevOps Engineer, you will be responsible for automating and streamlining our development and operations processes. You will work on maintaining and improving our deployment pipelines, infrastructure, and monitoring systems.'
+    },
+]
 
 # Function to seed data
 def seed_data():
     with app.app_context():
-        # Create sample users
-        user1 = User(username='user1', email='user1@example.com', password='password1')
-        user2 = User(username='user2', email='user2@example.com', password='password2')
+        # Delete existing data from tables
+        db.session.query(User).delete()
+        db.session.query(JobListing).delete()
+        db.session.query(JobApplication).delete()
 
-        # Create sample job listings
-        job1 = JobListing(
-            title='Job 1',
-            description='Description for Job 1',
-            location='Location 1',
-            company_name='Company 1',
-            posted_at=datetime.utcnow() 
-        )
-        job2 = JobListing(
-            title='Job 2',
-            description='Description for Job 2',
-            location='Location 2',
-            company_name='Company 2',
-            posted_at=datetime.utcnow() 
-        )
+        # Create sample users
+        users = []
+        for _ in range(5):
+            username = fake.user_name()
+            email = fake.email()
+            password = 'password'  # You can use a common password for all users for simplicity
+            user = User(username=username, email=email, password=password)
+            users.append(user)
+            db.session.add(user)
+
+        # Create sample job listings with realistic titles and descriptions
+        tech_companies = ['Meta', 'Google', 'Twitter']
+        job_listings = []
+        for company in tech_companies:
+            for job_data in tech_job_data:
+                title = job_data['title']
+                description = job_data['description']
+                location = fake.address()
+                company_name = company
+                posted_at = datetime.utcnow()
+                job = JobListing(title=title, description=description, location=location, company_name=company_name, posted_at=posted_at)
+                job_listings.append(job)
+                db.session.add(job)
 
         # Create sample job applications
-        application1 = JobApplication(
-            cover_letter='Cover letter for Application 1',
-            resume_url='resume_url_1',
-            user=user1,
-            job=job1,
-            applied_at = datetime.utcnow() 
-        )
-        application2 = JobApplication(
-            cover_letter='Cover letter for Application 2',
-            resume_url='resume_url_2',
-            user=user2,
-            job=job2,
-            applied_at = datetime.utcnow() 
-        )
+        for user in users:
+            for i in range(1, 6):
+                cover_letter = fake.text()
+                resume_url = fake.url()
+                job = job_listings[i - 1]  # Assign each user to a specific job
+                applied_at = datetime.utcnow()
+                application = JobApplication(cover_letter=cover_letter, resume_url=resume_url, user=user, job=job, applied_at=applied_at)
+                db.session.add(application)
 
-        user1.jobs.append(job1)
-        user2.jobs.append(job2)
-
-        # Add the sample data to the database
-        db.session.add(user1)
-        db.session.add(user2)
-        db.session.add(job1)
-        db.session.add(job2)
-        db.session.add(application1)
-        db.session.add(application2)
+                # Populate the user_joblisting_association table
+                user.jobs.append(job)
 
         # Commit the changes to the database
         db.session.commit()
 
 if __name__ == '__main__':
     seed_data()
-    print
-
+    print("Data seeding completed.")

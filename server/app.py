@@ -82,7 +82,7 @@ class UserLogInResource(Resource):
         else:
             return {'message':'Invalid credentials'},401
         
-api.add_resource(UserLogInResource,'/log in')
+api.add_resource(UserLogInResource,'/login')
 
 class UserResource(Resource):
     @jwt_required()
@@ -114,7 +114,6 @@ class JobListResource(Resource):
         response = make_response(jsonify(joblists),200)
         return response
     
-    @jwt_required()
     def post(self):
         data = request.get_json()
         new_job = JobListing(title=data['title'],description=data['description'],location=data['location'],company_name=data['company_name'])
@@ -127,7 +126,6 @@ class JobListResource(Resource):
 api.add_resource(JobListResource,'/Availablejobs')
 
 class JobListByIdResource(Resource):
-    @jwt_required()
     def get(self, id):  # Changed parameter name to 'id'
         job = JobListing.query.filter(JobListing.id == id).first()
         if not job:
@@ -141,13 +139,11 @@ api.add_resource(JobListByIdResource, '/SearchJob/<int:id>')  # Updated endpoint
 
 
 class JobApplicationResource(Resource):
-    @jwt_required()
     def get(self):
         job_applications = [{"id":application.id,"cover_letter":application.cover_letter,"resume_url":application.resume_url,"applied_at":application.applied_at} for application in JobApplication.query.all()]
         response = make_response(jsonify(job_applications), 200)
         return response
     
-    @jwt_required()
     def post(self):
         data = request.get_json()
         application = JobApplication(cover_letter=data['cover_letter'],resume_url=data['resume_url'],applied_at=datetime.utcnow(),user_id=data['user_id'],job_listing_id=data['job_listing_id'])
@@ -162,7 +158,7 @@ api.add_resource(JobApplicationResource, '/job-applications')
 
 class JobApplicationByIdResource(Resource):
     
-    @jwt_required()
+
     def get(self, id):
         application = JobApplication.query.filter(JobApplication.id == id).first()
         if not application:
@@ -170,7 +166,7 @@ class JobApplicationByIdResource(Resource):
         response = make_response(application.serialize(), 200)
         return response
     
-    @jwt_required()
+    
     def delete(self, id):
         application = JobApplication.query.get(id)
         if not application:
@@ -179,7 +175,7 @@ class JobApplicationByIdResource(Resource):
         db.session.commit()
         return {'message': 'Job application deleted'}, 200
     
-    @jwt_required()
+    
     def patch(self, id):
         application = JobApplication.query.get(id)
         if not application:
