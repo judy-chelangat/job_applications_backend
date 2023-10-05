@@ -110,7 +110,7 @@ api.add_resource(UserById, '/user/<int:id>')
     
 class JobListResource(Resource):
     def get(self):
-        joblists = [{'id':job.id,'title':job.title,'description':job.description,'location':job.location,'company_name':job.company_name,'datetime':job.posted_at}  for job in JobListing.query.all()]
+        joblists = [{'id':job.id,'title':job.title,'description':job.description,'image_url':job.company_image, 'location':job.location,'company_name':job.company_name,'datetime':job.posted_at}  for job in JobListing.query.all()]
         response = make_response(jsonify(joblists),200)
         return response
     

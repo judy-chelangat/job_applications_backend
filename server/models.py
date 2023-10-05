@@ -46,6 +46,7 @@ class JobListing(db.Model, SerializerMixin):
     location = db.Column(db.String(255), nullable=False)
     company_name = db.Column(db.String(255), nullable=False)
     posted_at = db.Column(db.DateTime, server_default=db.func.now())
+    company_image = db.Column(db.String())
 
     applications = db.relationship('JobApplication', backref='job')
     applicants = db.relationship('User', secondary=user_joblisting_association, back_populates='jobs')
@@ -58,6 +59,7 @@ class JobListing(db.Model, SerializerMixin):
             "location ":self.location,
             "company_name":self.company_name,
             "posted_at":self.posted_at,
+            "image_url":self.company_image,
             "applicants": [applicant.username for applicant in self.applicants],
             "application": [application.cover_letter for application in self.applications]
         }
