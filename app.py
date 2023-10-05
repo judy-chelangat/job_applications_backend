@@ -146,7 +146,7 @@ class JobApplicationResource(Resource):
     
     def post(self):
         data = request.get_json()
-        application = JobApplication(cover_letter=data['cover_letter'],resume_url=data['resume_url'],applied_at=datetime.utcnow(),user_id=data['user_id'],job_listing_id=data['job_listing_id'])
+        application = JobApplication(cover_letter=data['cover_letter'],resume_url=data[''],applied_at=datetime.utcnow())
         db.session.add(application)
         db.session.commit()
 
